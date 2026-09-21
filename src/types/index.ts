@@ -1,0 +1,5 @@
+export * from './page'
+export * from './lead'
+export * from './service'
+export * from './pricing'
+export * from './faq'

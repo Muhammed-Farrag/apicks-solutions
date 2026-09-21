@@ -1,11 +1,5 @@
-# Ignore Windows shortcuts and installers
-*.lnk
-*.exe
-desktop.ini
-
-# Ignore VS Code workspace storage
-.vscode/
-
-# Ignore system files
-Thumbs.db
-.DS_Store
+node_modules
+dist
+*.tsbuildinfo
+.env.local
+.env.*.local
