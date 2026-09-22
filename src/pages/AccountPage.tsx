@@ -5,41 +5,40 @@ import { isSignupConfigured, redirectToApple, redirectToGoogle, registerAccountE
 import { PageLink } from '../components/navigation'
 import { PageHero } from '../components/common'
 
+const PIPELINE_PREVIEW_STAGES = [
+  { step: '01', label: 'DISCOVER', progress: '72%' },
+  { step: '02', label: 'REVIEW', progress: '55%' },
+  { step: '03', label: 'MOVE', progress: '86%' },
+] as const
+
 /**
  * Account Access / Deal Room Onboarding Page Component.
  *
- * WHAT WAS DONE (Phases 1-6):
- * - Extracted from Site.tsx into a dedicated single-responsibility page in Phase 6.
- * - Separated authentication & external redirects into `src/services/accountService.ts` in Phase 4.
- * - Displays pipeline preview visualization (01 Discover, 02 Review, 03 Move progress bars).
- * - Provider sign-up buttons for Google and Apple with fallback notifications when unconfigured.
- * - Work email signup form with validation and busy state handling.
- *
- * WHAT TO DO LATER (Phase 7+ Roadmap):
- * - Connect real Supabase / Firebase / Auth0 backend provider.
- * - Add session state store (e.g. `useAuth` hook) to track active user and deal room permissions.
- * - Add protected route guards for authenticated-only deal room actions.
+ * Cleaned in Phase 7 (DRY & Readability):
+ * - Clear descriptive naming (`signupStatus`, `isSubmitting`, `handleEmailSignup`).
+ * - Declarative pipeline preview stages extracted to `PIPELINE_PREVIEW_STAGES`.
+ * - Preserves independent form state and authentication service integration.
  */
 export function AccountPage() {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState('')
-  const [busy, setBusy] = useState(false)
+  const [signupStatus, setSignupStatus] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  async function emailSignup(event: FormEvent<HTMLFormElement>) {
+  async function handleEmailSignup(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!isSignupConfigured()) {
-      setStatus('Email registration is not open yet. Send the team a message for account access.')
+      setSignupStatus('Email registration is not open yet. Send the team a message for account access.')
       return
     }
-    setBusy(true)
+    setIsSubmitting(true)
     try {
       await registerAccountEmail(email)
-      setStatus('Check your inbox for the next step.')
+      setSignupStatus('Check your inbox for the next step.')
       setEmail('')
     } catch {
-      setStatus('Registration could not be completed. Please try again later.')
+      setSignupStatus('Registration could not be completed. Please try again later.')
     } finally {
-      setBusy(false)
+      setIsSubmitting(false)
     }
   }
 
@@ -57,9 +56,13 @@ export function AccountPage() {
             <span>YOUR PIPELINE / ACCESS PREVIEW</span>
             <h2>SEE THE SIGNAL.<br /><em>STAY AHEAD.</em></h2>
             <div className="k-account-visual">
-              <div><span>01</span><strong>DISCOVER</strong><i style={{ width: '72%' }} /></div>
-              <div><span>02</span><strong>REVIEW</strong><i style={{ width: '55%' }} /></div>
-              <div><span>03</span><strong>MOVE</strong><i style={{ width: '86%' }} /></div>
+              {PIPELINE_PREVIEW_STAGES.map((stage) => (
+                <div key={stage.step}>
+                  <span>{stage.step}</span>
+                  <strong>{stage.label}</strong>
+                  <i style={{ width: stage.progress }} />
+                </div>
+              ))}
             </div>
             <p>The account view is a preview; live leads and personal activity will appear after the authentication and bidding services are connected.</p>
           </div>
@@ -70,7 +73,7 @@ export function AccountPage() {
             <button
               className="k-provider"
               onClick={() => {
-                if (!redirectToGoogle()) setStatus('Google sign-up is being prepared. Contact the team for access.')
+                if (!redirectToGoogle()) setSignupStatus('Google sign-up is being prepared. Contact the team for access.')
               }}
             >
               <span className="k-google">G</span> CONTINUE WITH GOOGLE <ArrowUpRight size={18} />
@@ -78,13 +81,13 @@ export function AccountPage() {
             <button
               className="k-provider"
               onClick={() => {
-                if (!redirectToApple()) setStatus('Apple sign-up is being prepared. Contact the team for access.')
+                if (!redirectToApple()) setSignupStatus('Apple sign-up is being prepared. Contact the team for access.')
               }}
             >
               <Apple size={20} fill="currentColor" /> CONTINUE WITH APPLE <ArrowUpRight size={18} />
             </button>
             <div className="k-account-divider">OR USE YOUR EMAIL</div>
-            <form onSubmit={emailSignup}>
+            <form onSubmit={handleEmailSignup}>
               <label htmlFor="account-email">WORK EMAIL</label>
               <input
                 id="account-email"
@@ -95,11 +98,11 @@ export function AccountPage() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
-              <button className="k-action k-action-mint" type="submit" disabled={busy}>
-                {busy ? 'SENDING…' : 'SIGN UP WITH EMAIL'} <ArrowUpRight size={18} />
+              <button className="k-action k-action-mint" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'SENDING…' : 'SIGN UP WITH EMAIL'} <ArrowUpRight size={18} />
               </button>
             </form>
-            {status && <p className="k-form-status" role="status">{status}</p>}
+            {signupStatus && <p className="k-form-status" role="status">{signupStatus}</p>}
             <PageLink page="contact" className="k-underlink">NEED HELP? TALK TO A-PICKS <ArrowUpRight size={17} /></PageLink>
           </div>
         </div>

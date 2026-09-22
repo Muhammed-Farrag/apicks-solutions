@@ -5,23 +5,26 @@ import { PageLink } from '../components/navigation'
 import { BigCTA } from '../components/common'
 import { LeadTile } from '../components/leads'
 import { SceneStage } from '../components/scene'
+const ADVANTAGE_METRICS = [
+  { value: '25', label: 'ACTIVE CALLERS' },
+  { value: '16+', label: 'CLIENTS SERVED' },
+  { value: '1,500+', label: 'LEADS MONTHLY' },
+  { value: '24–48h', label: 'RESPONSE WINDOW' },
+] as const
+
+const PIPELINE_PROCESS_STEPS = [
+  'Understand your criteria',
+  'Find the conversation',
+  'Qualify the opportunity',
+  'Hand it over with context',
+] as const
+
 /**
  * Home Page Component.
  *
- * WHAT WAS DONE (Phases 1-6):
- * - Extracted into a dedicated single-responsibility page component in Phase 6.
- * - Integrates `SceneStage` 3D viewport in hero section.
- * - Displays infinite animated marquee ticker ("MOTIVATED SELLERS ✳ QUALIFIED CONVERSATIONS...").
- * - Features the A-Picks Advantage metric cards (25 Active Callers, 16+ Clients, 1,500+ Leads, 24-48h).
- * - Interactive curved property photo gallery with services preview stack.
- * - Illustrative Lead Room marketplace preview cards using `LeadTile`.
- * - 4-stage process pipeline ("Signal to Handoff") with staggered reveal animations.
- * - Closes with reusable `BigCTA` conversion banner.
- *
- * WHAT TO DO LATER (Phase 7+ Roadmap):
- * - Extract hardcoded metrics (25 callers, 16+ clients, etc.) into `src/data.ts` for unified configuration.
- * - Extract the 4-stage process steps into `data.ts`.
- * - Add unit/integration tests for Home page layout and render states.
+ * Cleaned in Phase 7 (DRY & Readability):
+ * - Extracted advantage metrics and pipeline process steps into declarative constants.
+ * - Simplified JSX loops and streamlined structure.
  */
 export function HomePage() {
   return (
@@ -60,10 +63,12 @@ export function HomePage() {
             </div>
           </div>
           <div className="k-metric-grid" data-reveal>
-            <div><strong>25</strong><span>ACTIVE CALLERS</span></div>
-            <div><strong>16+</strong><span>CLIENTS SERVED</span></div>
-            <div><strong>1,500+</strong><span>LEADS MONTHLY</span></div>
-            <div><strong>24–48h</strong><span>RESPONSE WINDOW</span></div>
+            {ADVANTAGE_METRICS.map((metric) => (
+              <div key={metric.label}>
+                <strong>{metric.value}</strong>
+                <span>{metric.label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -116,7 +121,7 @@ export function HomePage() {
             <p>Outbound work matters when the next step is clear. Our process keeps sellers, callers, and investors moving together.</p>
           </div>
           <div className="k-flow-grid">
-            {['Understand your criteria', 'Find the conversation', 'Qualify the opportunity', 'Hand it over with context'].map((item, i) => (
+            {PIPELINE_PROCESS_STEPS.map((item, i) => (
               <div key={item} data-reveal style={{ '--delay': `${i * 100}ms` } as CSSProperties}>
                 <span>0{i + 1}</span>
                 <div className="k-flow-node" />
@@ -130,3 +135,4 @@ export function HomePage() {
     </>
   )
 }
+

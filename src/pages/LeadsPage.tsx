@@ -4,34 +4,21 @@ import { leads } from '../data'
 import { PageLink } from '../components/navigation'
 import { PageHero } from '../components/common'
 import { LeadTile } from '../components/leads'
+import { LEAD_CATEGORIES, filterLeads, formatOpportunityCount } from '../utils'
 
 /**
  * Leads (Lead Room Preview) Page Component.
  *
- * WHAT WAS DONE (Phases 1-6):
- * - Extracted from Site.tsx into a dedicated single-responsibility page in Phase 6.
- * - Utilizes shared `PageHero` with index 07 and 3D signal scene.
- * - Interactive category filters: All, Single family, Townhouse.
- * - Real-time keyword search bar filtering across property title, city, and state.
- * - Displays sample opportunity count badge.
- * - Renders grid of `LeadTile` components linking to the lead modal.
- * - Deep linking support (`?page=leads&lead=AP-101`) orchestrated cleanly by `Site.tsx`.
- * - Educational terms banner explaining live auction roadmap and verification rules.
- *
- * WHAT TO DO LATER (Phase 7+ Roadmap):
- * - Extract search and filtering logic into a custom `useLeadFilter` hook with debounce.
- * - Add pagination or infinite scroll for live database lead listings.
- * - Connect to live WebSocket / polling feed for real-time bid updates once backend is live.
+ * Cleaned in Phase 7 (DRY & Readability):
+ * - Pure filtering & case-insensitive search logic extracted to `src/utils/leads.ts`.
+ * - Category list centralized as `LEAD_CATEGORIES`.
+ * - Clear descriptive state naming (`selectedCategory`, `searchQuery`, `filteredLeads`).
+ * - Formatted opportunity count extracted to pure helper `formatOpportunityCount`.
  */
 export function LeadsPage() {
-  const [filter, setFilter] = useState('All')
-  const [query, setQuery] = useState('')
-  const categories = ['All', 'Single family', 'Townhouse']
-  const shown = leads.filter(
-    (item) =>
-      (filter === 'All' || item.category === filter) &&
-      `${item.title} ${item.city} ${item.state}`.toLowerCase().includes(query.toLowerCase())
-  )
+  const [selectedCategory, setSelectedCategory] = useState<string>('All')
+  const [searchQuery, setSearchQuery] = useState('')
+  const filteredLeads = filterLeads(leads, selectedCategory, searchQuery)
 
   return (
     <>
@@ -48,14 +35,14 @@ export function LeadsPage() {
           <div className="k-section-marker">01 <span>OPPORTUNITY BOARD / PREVIEW</span></div>
           <div className="k-lead-toolbar">
             <div role="group" aria-label="Filter leads">
-              {categories.map((item) => (
+              {LEAD_CATEGORIES.map((category) => (
                 <button
-                  key={item}
-                  className={filter === item ? 'is-active' : ''}
-                  aria-pressed={filter === item}
-                  onClick={() => setFilter(item)}
+                  key={category}
+                  className={selectedCategory === category ? 'is-active' : ''}
+                  aria-pressed={selectedCategory === category}
+                  onClick={() => setSelectedCategory(category)}
                 >
-                  {item}
+                  {category}
                 </button>
               ))}
             </div>
@@ -63,19 +50,21 @@ export function LeadsPage() {
               <Search size={17} />
               <input
                 type="search"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder="Search city or property"
                 aria-label="Search leads"
               />
             </label>
           </div>
           <div className="k-lead-count">
-            {shown.length.toString().padStart(2, '0')} SAMPLE OPPORTUNITIES <span>IMAGE LINKS OPEN THE A-PICKS LEAD ROOM</span>
+            {formatOpportunityCount(filteredLeads.length)} SAMPLE OPPORTUNITIES <span>IMAGE LINKS OPEN THE A-PICKS LEAD ROOM</span>
           </div>
-          {shown.length ? (
+          {filteredLeads.length ? (
             <div className="k-lead-grid">
-              {shown.map((item) => <LeadTile key={item.id} lead={item} index={leads.indexOf(item)} />)}
+              {filteredLeads.map((lead) => (
+                <LeadTile key={lead.id} lead={lead} index={leads.indexOf(lead)} />
+              ))}
             </div>
           ) : (
             <div className="k-lead-empty">No sample leads match your search. Try another city or property type.</div>

@@ -1,19 +1,19 @@
 import { ArrowUpRight } from 'lucide-react'
 import { PageLink } from '../components/navigation'
 import { PageHero, BigCTA } from '../components/common'
+const CORE_VALUES = [
+  { n: '01', title: 'Experienced callers', text: 'Professional conversations that build trust and surface useful information.' },
+  { n: '02', title: 'Clear economics', text: 'Straightforward pricing and reporting so outreach can grow with your business.' },
+  { n: '03', title: 'Built around you', text: 'Campaign criteria, quality reviews, and follow-up shaped to your goals.' },
+  { n: '04', title: 'Results that matter', text: 'Qualified leads, booked appointments, and actual deal movement.' },
+] as const
+
 /**
  * About Page Component.
  *
- * WHAT WAS DONE (Phases 1-6):
- * - Extracted from Site.tsx into a clean, dedicated page component in Phase 6.
- * - Utilizes shared `PageHero` with index 02 and 3D miniature artwork via `SceneStage`.
- * - Features the brand mission narrative ("Calls are easy. Trust is earned.") and showcase imagery.
- * - Displays the 4 Core Values ("What Drives the Work") grid with reveal triggers.
- * - Closes with shared `BigCTA` component linking to Contact.
- *
- * WHAT TO DO LATER (Phase 7+ Roadmap):
- * - Extract the 4 values array (01 Experienced callers, 02 Clear economics, etc.) into `src/data.ts`.
- * - Add optional Team members card section once leadership profiles are provided.
+ * Cleaned in Phase 7 (DRY & Readability):
+ * - Extracted core brand values into declarative `CORE_VALUES` constant.
+ * - Simplified JSX rendering for values grid.
  */
 export function AboutPage() {
   return (
@@ -44,12 +44,7 @@ export function AboutPage() {
         <div className="k-container">
           <div className="k-section-marker">02 <span>WHAT DRIVES THE WORK</span></div>
           <div className="k-values-grid">
-            {[
-              { n: '01', title: 'Experienced callers', text: 'Professional conversations that build trust and surface useful information.' },
-              { n: '02', title: 'Clear economics', text: 'Straightforward pricing and reporting so outreach can grow with your business.' },
-              { n: '03', title: 'Built around you', text: 'Campaign criteria, quality reviews, and follow-up shaped to your goals.' },
-              { n: '04', title: 'Results that matter', text: 'Qualified leads, booked appointments, and actual deal movement.' },
-            ].map((value) => (
+            {CORE_VALUES.map((value) => (
               <article key={value.n} data-reveal>
                 <span>{value.n}</span>
                 <h3>{value.title}</h3>

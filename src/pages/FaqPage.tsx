@@ -3,25 +3,19 @@ import { ArrowUpRight } from 'lucide-react'
 import { faqs } from '../data'
 import { PageLink } from '../components/navigation'
 import { PageHero, BigCTA } from '../components/common'
+import { FAQ_CATEGORIES, filterFaqs } from '../utils'
 
 /**
  * FAQ (Frequently Asked Questions) Page Component.
  *
- * WHAT WAS DONE (Phases 1-6):
- * - Extracted from Site.tsx into a dedicated single-responsibility page in Phase 6.
- * - Utilizes shared `PageHero` with index 05 and 3D signal scene.
- * - Category filter pills: All, Getting started, Results, Coverage, Team, Pricing.
- * - Accessible HTML `<details>` and `<summary>` accordion list with animated plus icon.
- * - Closes with shared `BigCTA` banner.
- *
- * WHAT TO DO LATER (Phase 7+ Roadmap):
- * - Add search bar filtering questions by keyword in addition to category.
- * - Extract category list into `src/data.ts` derived dynamically from FAQ data.
+ * Cleaned in Phase 7 (DRY & Readability):
+ * - Pure category filtering logic extracted to `src/utils/faq.ts`.
+ * - Category list centralized as `FAQ_CATEGORIES`.
+ * - Clear descriptive state naming (`selectedCategory`, `filteredFaqs`).
  */
 export function FaqPage() {
-  const categories = ['All', 'Getting started', 'Results', 'Coverage', 'Team', 'Pricing']
-  const [category, setCategory] = useState('All')
-  const shown = faqs.filter((item) => category === 'All' || item.category === category)
+  const [selectedCategory, setSelectedCategory] = useState<string>('All')
+  const filteredFaqs = filterFaqs(faqs, selectedCategory)
 
   return (
     <>
@@ -41,20 +35,20 @@ export function FaqPage() {
               <h2 data-reveal>THE THINGS<br /><em>YOU SHOULD</em><br />KNOW.</h2>
               <p>Choose a topic. Expand a question. If your market needs a more specific answer, the team is one message away.</p>
               <div className="k-faq-filters" role="group" aria-label="Filter questions">
-                {categories.map((item) => (
+                {FAQ_CATEGORIES.map((category) => (
                   <button
-                    key={item}
-                    onClick={() => setCategory(item)}
-                    aria-pressed={item === category}
-                    className={item === category ? 'is-active' : ''}
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    aria-pressed={selectedCategory === category}
+                    className={selectedCategory === category ? 'is-active' : ''}
                   >
-                    {item}
+                    {category}
                   </button>
                 ))}
               </div>
             </div>
-            <div className="k-faq-list" key={category}>
-              {shown.map((item, index) => (
+            <div className="k-faq-list" key={selectedCategory}>
+              {filteredFaqs.map((item, index) => (
                 <details key={item.question}>
                   <summary>
                     <span>0{index + 1}</span>

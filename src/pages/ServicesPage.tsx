@@ -4,26 +4,24 @@ import { services } from '../data'
 import { PageLink } from '../components/navigation'
 import { PageHero, BigCTA } from '../components/common'
 
+const SUPPORT_PROOF_POINTS = [
+  'Outreach built around your market',
+  'Qualified leads delivered to your CRM',
+  'Daily or weekly performance reporting',
+  'Follow-up from first interest to offer',
+] as const
+
 /**
  * Services Page Component.
  *
- * WHAT WAS DONE (Phases 1-6):
- * - Extracted from Site.tsx into a dedicated single-responsibility page in Phase 6.
- * - Utilizes shared `PageHero` with index 03 and 3D signal scene.
- * - Interactive service selector tabs with `role="tablist"` and `role="tabpanel"`.
- * - Dynamic display panel switching between:
- *   01 Dedicated Cold Callers, 02 Lead Qualification, 03 Follow-Up Engine, 04 Acquisition Support.
- * - Displays step-by-step process chain for selected service.
- * - "The Support System" proof stripes with check indicators.
- * - Closes with shared `BigCTA` component.
- *
- * WHAT TO DO LATER (Phase 7+ Roadmap):
- * - Sync active service index with query params (e.g. `?page=services&service=02`) for deep linking.
- * - Extract support system proof points into `src/data.ts`.
+ * Cleaned in Phase 7 (DRY & Readability):
+ * - Clear descriptive naming (`activeServiceIndex`, `selectedService`).
+ * - Safe fallback indexing for service item lookup.
+ * - Extracted support proof points constant.
  */
 export function ServicesPage() {
-  const [active, setActive] = useState(0)
-  const service = services[active]
+  const [activeServiceIndex, setActiveServiceIndex] = useState(0)
+  const selectedService = services[activeServiceIndex] ?? services[0]
 
   return (
     <>
@@ -44,9 +42,9 @@ export function ServicesPage() {
                 <button
                   key={item.number}
                   role="tab"
-                  aria-selected={active === index}
-                  className={active === index ? 'is-active' : ''}
-                  onClick={() => setActive(index)}
+                  aria-selected={activeServiceIndex === index}
+                  className={activeServiceIndex === index ? 'is-active' : ''}
+                  onClick={() => setActiveServiceIndex(index)}
                 >
                   <span>{item.number}</span>
                   <strong>{item.name}</strong>
@@ -54,15 +52,15 @@ export function ServicesPage() {
                 </button>
               ))}
             </div>
-            <div className="k-service-display" role="tabpanel" key={active}>
+            <div className="k-service-display" role="tabpanel" key={activeServiceIndex}>
               <div className="k-service-display-top">
-                <span>SERVICE / {service.number}</span>
-                <span>OUTPUT → {service.output.toUpperCase()}</span>
+                <span>SERVICE / {selectedService.number}</span>
+                <span>OUTPUT → {selectedService.output.toUpperCase()}</span>
               </div>
-              <h2>{service.name}<span>.</span></h2>
-              <p>{service.description}</p>
+              <h2>{selectedService.name}<span>.</span></h2>
+              <p>{selectedService.description}</p>
               <div className="k-service-chain">
-                {service.steps.map((step, i) => (
+                {selectedService.steps.map((step, i) => (
                   <div key={step}>
                     <span>0{i + 1}</span>
                     <strong>{step}</strong>
@@ -79,12 +77,7 @@ export function ServicesPage() {
           <div className="k-section-marker">02 <span>THE SUPPORT SYSTEM</span></div>
           <h2 data-reveal>YOU CLOSE.<br /><em>WE KEEP THE</em><br />ENGINE RUNNING.</h2>
           <div className="k-proof-stripes">
-            {[
-              'Outreach built around your market',
-              'Qualified leads delivered to your CRM',
-              'Daily or weekly performance reporting',
-              'Follow-up from first interest to offer',
-            ].map((item, i) => (
+            {SUPPORT_PROOF_POINTS.map((item, i) => (
               <div key={item} data-reveal>
                 <span>0{i + 1}</span>
                 <strong>{item}</strong>

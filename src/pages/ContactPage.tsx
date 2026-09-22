@@ -19,24 +19,24 @@ import { PageHero } from '../components/common'
  * - Add toast notification system instead of inline banner message.
  */
 export function ContactPage() {
-  const [status, setStatus] = useState('')
-  const [busy, setBusy] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  async function send(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const form = event.currentTarget
-    if (busy) return
-    setBusy(true)
-    setStatus('')
+    if (isSubmitting) return
+    setIsSubmitting(true)
+    setSubmitStatus('')
     const fields = new FormData(form)
     try {
       await submitContactMessage(fields)
       form.reset()
-      setStatus('Message sent. A-Picks will be in touch.')
+      setSubmitStatus('Message sent. A-Picks will be in touch.')
     } catch {
-      setStatus('Your message could not be sent. Please email info@apicks-solutions.com or call the team.')
+      setSubmitStatus('Your message could not be sent. Please email info@apicks-solutions.com or call the team.')
     } finally {
-      setBusy(false)
+      setIsSubmitting(false)
     }
   }
 
@@ -73,7 +73,7 @@ export function ContactPage() {
               </div>
             </div>
           </div>
-          <form className="k-contact-form" onSubmit={send}>
+          <form className="k-contact-form" onSubmit={handleSubmit}>
             <div className="k-form-head">
               <span>CONTACT / A-PICKS</span>
               <span>01—04</span>
@@ -87,10 +87,10 @@ export function ContactPage() {
             <label htmlFor="contact-message">WHAT ARE YOU WORKING ON?</label>
             <textarea id="contact-message" name="message" required placeholder="Your market, goals, and the support you need" rows={5} maxLength={3000} />
             <input type="hidden" name="_subject" value="New Message from A-Picks Solutions" />
-            <button className="k-action k-action-mint" type="submit" disabled={busy}>
-              {busy ? 'SENDING…' : 'SEND YOUR MESSAGE'} <ArrowUpRight size={18} />
+            <button className="k-action k-action-mint" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'SENDING…' : 'SEND YOUR MESSAGE'} <ArrowUpRight size={18} />
             </button>
-            {status && <p className="k-form-status" role="status">{status}</p>}
+            {submitStatus && <p className="k-form-status" role="status">{submitStatus}</p>}
             <small>Your message is sent through the contact service used by the current A-Picks site.</small>
           </form>
         </div>

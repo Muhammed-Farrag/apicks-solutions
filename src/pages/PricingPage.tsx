@@ -4,29 +4,27 @@ import { ArrowUpRight, Check } from 'lucide-react'
 import { callerPackages } from '../data'
 import { PageLink } from '../components/navigation'
 import { PageHero, BigCTA } from '../components/common'
+import {
+  MIN_CALLERS,
+  MAX_CALLERS,
+  DEFAULT_CALLERS,
+  findCallerPackage,
+  calculateMonthlyPrice,
+  formatCurrency,
+} from '../utils'
 
 /**
  * Pricing Page Component.
  *
- * WHAT WAS DONE (Phases 1-6):
- * - Extracted from Site.tsx into a dedicated single-responsibility page in Phase 6.
- * - Interactive caller team calculator with HTML5 range input (2 to 15 callers).
- * - Real-time tier matching (Starter, Focused, Expansion) calculating monthly investment.
- * - Dynamic visual bar meter indicating caller team capacity.
- * - Displays 3 package cards (highlighting 'Focused' as Most Popular).
- * - Promotional banner highlighting reference site special offer ($1,000/caller).
- * - Additional support rate cards (Acquisition managers $8/hr, 2+ at $7/hr, Skip tracing $0.03/record).
- * - Closes with shared `BigCTA` banner.
- *
- * WHAT TO DO LATER (Phase 7+ Roadmap):
- * - Extract pure calculation logic (`calculateMonthlyCost`, `findMatchingPlan`) into a dedicated
- *   utility in `src/utils/pricing.ts` with unit test suite.
- * - Extract additional support services rates into `src/data.ts`.
+ * Cleaned in Phase 7 (DRY & Readability):
+ * - Pure calculation logic extracted to `src/utils/pricing.ts`.
+ * - Explicit naming (`selectedCallers`, `selectedPackage`, `monthlyEstimate`).
+ * - Constants `MIN_CALLERS` and `MAX_CALLERS` centralized.
  */
 export function PricingPage() {
-  const [callers, setCallers] = useState(4)
-  const plan = callerPackages.find((item) => callers >= item.range[0] && callers <= item.range[1]) ?? callerPackages[2]
-  const monthly = callers * plan.price
+  const [selectedCallers, setSelectedCallers] = useState(DEFAULT_CALLERS)
+  const selectedPackage = findCallerPackage(selectedCallers, callerPackages)
+  const monthlyEstimate = calculateMonthlyPrice(selectedCallers, selectedPackage.price)
 
   return (
     <>
@@ -44,27 +42,27 @@ export function PricingPage() {
             <div className="k-section-marker">01 <span>PLAN YOUR CALLING TEAM</span></div>
             <h2 data-reveal>PUT A NUMBER<br /><em>ON MOMENTUM.</em></h2>
             <p>Move the slider to estimate monthly caller costs from the published package tiers. The team can confirm a current quote for your campaign.</p>
-            <label htmlFor="caller-count">HOW MANY CALLERS? <strong>{callers}</strong></label>
+            <label htmlFor="caller-count">HOW MANY CALLERS? <strong>{selectedCallers}</strong></label>
             <input
               id="caller-count"
               type="range"
-              min="2"
-              max="15"
-              value={callers}
-              onChange={(event) => setCallers(Number(event.target.value))}
+              min={MIN_CALLERS}
+              max={MAX_CALLERS}
+              value={selectedCallers}
+              onChange={(event) => setSelectedCallers(Number(event.target.value))}
             />
             <div className="k-calc-range">
-              <span>2 CALLERS</span>
-              <span>15 CALLERS</span>
+              <span>{MIN_CALLERS} CALLERS</span>
+              <span>{MAX_CALLERS} CALLERS</span>
             </div>
           </div>
           <div className="k-calc-result" aria-live="polite">
-            <span>MONTHLY ESTIMATE / {plan.name.toUpperCase()}</span>
-            <strong>${monthly.toLocaleString()}</strong>
-            <p>{callers} callers × ${plan.price.toLocaleString()} per caller / month</p>
+            <span>MONTHLY ESTIMATE / {selectedPackage.name.toUpperCase()}</span>
+            <strong>{formatCurrency(monthlyEstimate)}</strong>
+            <p>{selectedCallers} callers × {formatCurrency(selectedPackage.price)} per caller / month</p>
             <div className="k-calc-bars" aria-hidden="true">
-              {Array.from({ length: 15 }, (_, index) => (
-                <i key={index} className={index < callers ? 'is-on' : ''} />
+              {Array.from({ length: MAX_CALLERS }, (_, index) => (
+                <i key={index} className={index < selectedCallers ? 'is-on' : ''} />
               ))}
             </div>
             <small>Caller package pricing only. Taxes or additional services, if any, are excluded.</small>
