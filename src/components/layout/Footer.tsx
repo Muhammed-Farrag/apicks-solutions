@@ -26,6 +26,27 @@ export function Footer() {
           <PageLink page="contact">Contact</PageLink>
           <PageLink page="account">Account access</PageLink>
         </div>
+        <div>
+          <span>CONTACT</span>
+          <div className="k-footer-contact-item">
+            <span>Tel: </span>
+            <a href="tel:+14014225616">(401) 422-5616</a>
+          </div>
+          <div className="k-footer-contact-item">
+            <span>WhatsApp: </span>
+            <a href="https://wa.me/14014225616" target="_blank" rel="noopener noreferrer">
+              +1 (401) 422-5616
+            </a>
+          </div>
+          <div className="k-footer-contact-item">
+            <span>Email: </span>
+            <a href="mailto:info@apicks-solutions.com">info@apicks-solutions.com</a>
+          </div>
+          <div className="k-footer-contact-item">
+            <span>Address: </span>
+            <span>Albuquerque, NM</span>
+          </div>
+        </div>
         <div className="k-footer-cta">
           <span>THE NEXT DEAL IS OUT THERE.</span>
           <PageLink page="contact">
