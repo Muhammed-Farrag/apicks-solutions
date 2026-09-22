@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { SceneStage } from '../scene/SceneStage'
+import { Marquee } from './Marquee'
 
 export interface PageHeroProps {
   index: string
@@ -11,23 +12,27 @@ export interface PageHeroProps {
 
 /**
  * Standard hero section used across secondary pages (About, Services, Pricing, FAQ, Contact, Leads, Account).
+ * Features matching 3D perspective SceneStage and continuous moving Marquee ticker.
  */
 export function PageHero({ index, label, title, description, children }: PageHeroProps) {
   return (
-    <section className="k-page-hero">
-      <div className="k-page-hero-grid">
-        <div>
-          <div className="k-page-overline">
-            {index} / {label}
+    <>
+      <section className="k-page-hero">
+        <div className="k-page-hero-grid">
+          <div>
+            <div className="k-page-overline">
+              {index} / {label}
+            </div>
+            <h1>{title}</h1>
+            <p>{description}</p>
+            {children}
           </div>
-          <h1>{title}</h1>
-          <p>{description}</p>
-          {children}
+          <div className="k-page-hero-art" aria-hidden="true">
+            <SceneStage index={index} />
+          </div>
         </div>
-        <div className="k-page-hero-art" aria-hidden="true">
-          <SceneStage index={index} />
-        </div>
-      </div>
-    </section>
+      </section>
+      <Marquee />
+    </>
   )
 }

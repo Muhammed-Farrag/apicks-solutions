@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react'
 import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import { services, leads } from '../data'
 import { PageLink } from '../components/navigation'
-import { BigCTA } from '../components/common'
+import { BigCTA, Marquee } from '../components/common'
 import { LeadTile } from '../components/leads'
 import { SceneStage } from '../components/scene'
 const ADVANTAGE_METRICS = [
@@ -47,11 +47,7 @@ export function HomePage() {
         </div>
         <SceneStage />
       </section>
-      <div className="k-marquee" aria-hidden="true">
-        <div className="k-marquee-track">
-          MOTIVATED SELLERS <span>✳</span> QUALIFIED CONVERSATIONS <span>✳</span> INVESTOR-READY LEADS <span>✳</span> MOTIVATED SELLERS <span>✳</span> QUALIFIED CONVERSATIONS <span>✳</span> INVESTOR-READY LEADS <span>✳</span>MOTIVATED SELLERS <span>✳</span> QUALIFIED CONVERSATIONS <span>✳</span> INVESTOR-READY LEADS <span>✳</span> MOTIVATED SELLERS <span>✳</span> QUALIFIED CONVERSATIONS <span>✳</span> INVESTOR-READY LEADS <span>✳</span>MOTIVATED SELLERS <span>✳</span> QUALIFIED CONVERSATIONS <span>✳</span> INVESTOR-READY LEADS <span>✳</span> MOTIVATED SELLERS <span>✳</span> QUALIFIED CONVERSATIONS <span>✳</span> INVESTOR-READY LEADS <span>✳</span>
-        </div>
-      </div>
+      <Marquee />
       <section className="k-home-intro k-section">
         <div className="k-container">
           <div className="k-section-marker">01 <span>THE A-PICKS ADVANTAGE</span></div>
