@@ -46,12 +46,12 @@ const IMAGES = [
   { src: "./images/img4.jpg",  alt: "Home exterior" },
 ];
 
-// ─── Card config — all same LANDSCAPE size ────────────────────────────────────
-const CW = 21; // vw — landscape width
-const CH = 16; // vh — landscape height  (CW/CH ≈ 1.6:1 ratio)
+// ─── Card config — slightly taller and narrower proportions ───────────────────
+const CW = 13; // vw — desktop card width
+const CH = 26; // vh — placeholder height (aspectRatio controls precise rendering)
 
 // Per-card rest scale for subtle visual variation
-const SC = [0.90, 0.85, 0.92, 0.88, 0.88, 0.90, 0.85, 0.88];
+const SC = [0.94, 0.92, 0.94, 0.92, 0.92, 0.94, 0.92, 0.94];
 
 interface CardDef {
   item: { src: string; alt: string };
@@ -62,40 +62,39 @@ interface CardDef {
   z: number;
 }
 
-// SPREAD positions — user-adjusted (closer ring so center stays clear for text)
+// SPREAD positions — non-overlapping artistic distribution + densely covered center stack
 const CARDS: CardDef[] = [
-  { item: IMAGES[0], stackOffset: { x:  -8, y: -10 }, stackRotate: -18, target: { x: -24, y: -16, rotate: 0, scale: SC[0], w: CW, h: CH }, targetSm: { x: -22, y: -40 }, z: 2 },
-  { item: IMAGES[1], stackOffset: { x:  14, y: -10 }, stackRotate:  20, target: { x:  24, y: -16, rotate: 0, scale: SC[1], w: CW, h: CH }, targetSm: { x:  22, y: -40 }, z: 3 },
-  { item: IMAGES[2], stackOffset: { x: -16, y:   0 }, stackRotate:  -4, target: { x: -36, y:  -2, rotate: 0, scale: SC[2], w: CW, h: CH }, targetSm: { x: -22, y: -19 }, z: 4 },
-  { item: IMAGES[3], stackOffset: { x:   1, y: -10 }, stackRotate:  -2, target: { x:   5, y: -29, rotate: 0, scale: SC[3], w: CW, h: CH }, targetSm: { x:  22, y: -19 }, z: 5 },
-  { item: IMAGES[4], stackOffset: { x:  18, y:   1 }, stackRotate:   6, target: { x:  37, y:   4, rotate: 0, scale: SC[4], w: CW, h: CH }, targetSm: { x: -22, y:  20 }, z: 6 },
-  { item: IMAGES[5], stackOffset: { x:  -6, y:  10 }, stackRotate:   6, target: { x: -20, y:  17, rotate: 0, scale: SC[5], w: CW, h: CH }, targetSm: { x:  22, y:  20 }, z: 7 },
-  { item: IMAGES[6], stackOffset: { x:   8, y:   7 }, stackRotate:   3, target: { x:   2, y:  29, rotate: 0, scale: SC[6], w: CW, h: CH }, targetSm: { x: -22, y:  40 }, z: 8 },
-  { item: IMAGES[7], stackOffset: { x:  20, y:  12 }, stackRotate:  -7, target: { x:  20, y:  17, rotate: 0, scale: SC[7], w: CW, h: CH }, targetSm: { x:  22, y:  40 }, z: 9 },
+  { item: IMAGES[0], stackOffset: { x: -4, y: -5 }, stackRotate: -10, target: { x: -33, y: -32, rotate: -4, scale: SC[0], w: CW, h: CH }, targetSm: { x: -24, y: -38 }, z: 2 },
+  { item: IMAGES[1], stackOffset: { x:  4, y: -4 }, stackRotate:  12, target: { x:   0, y: -34, rotate:  3, scale: SC[1], w: CW, h: CH }, targetSm: { x:  24, y: -38 }, z: 3 },
+  { item: IMAGES[2], stackOffset: { x: -5, y:  1 }, stackRotate:  -5, target: { x:  33, y: -32, rotate: -3, scale: SC[2], w: CW, h: CH }, targetSm: { x: -24, y: -20 }, z: 4 },
+  { item: IMAGES[3], stackOffset: { x:  0, y:  0 }, stackRotate:   2, target: { x: -36, y:   0, rotate:  4, scale: SC[3], w: CW, h: CH }, targetSm: { x:  24, y: -20 }, z: 5 },
+  { item: IMAGES[4], stackOffset: { x:  5, y:  2 }, stackRotate:   7, target: { x:  36, y:   0, rotate: -2, scale: SC[4], w: CW, h: CH }, targetSm: { x:  24, y:  20 }, z: 6 },
+  { item: IMAGES[5], stackOffset: { x: -4, y:  5 }, stackRotate:  -4, target: { x: -33, y:  33, rotate:  3, scale: SC[5], w: CW, h: CH }, targetSm: { x: -24, y:  20 }, z: 7 },
+  { item: IMAGES[6], stackOffset: { x:  3, y:  5 }, stackRotate:   5, target: { x:   0, y:  34, rotate: -4, scale: SC[6], w: CW, h: CH }, targetSm: { x: -24, y:  38 }, z: 8 },
+  { item: IMAGES[7], stackOffset: { x: -1, y: -1 }, stackRotate:  -7, target: { x:  33, y:  33, rotate:  2, scale: SC[7], w: CW, h: CH }, targetSm: { x:  24, y:  38 }, z: 9 },
 ];
 
-// ─── Original StackSpread constants (unchanged) ───────────────────────────────
-const SCATTER_START   = 0.12;
-const SCATTER_END     = 0.90;
+// ─── StackSpread motion parameters ────────────────────────────────────────────
+const SCATTER_START   = 0.02;
+const SCATTER_END     = 0.88;
 const PARALLAX_X      = 2.6;
 const PARALLAX_Y      = 2.2;
 const PARALLAX_SPRING = { stiffness: 90, damping: 22, mass: 0.6 };
-const TEXT_FADE_START = 0.30;
-const SCROLL_LENGTH   = 300; // vh of internal scrollable content
+const TEXT_FADE_START = 0.28;
 
 const parallaxDepth = (i: number, total: number) =>
   total <= 1 ? 1 : 0.55 + (i / (total - 1)) * 0.75;
 
-// ─── Responsive (original logic) ─────────────────────────────────────────────
+// ─── Responsive (desktop and mobile column layouts with no overlap) ───────────
 const RESPONSIVE = {
   desktop: { scale: null as number | null, small: false, colX: null as number | null, card: null as { w: number; h: number } | null },
-  small:   { scale: 0.72, small: true, colX: 20, card: { w: 38, h: 20 } },
+  small:   { scale: 0.85, small: true, colX: 24, card: { w: 34, h: 20 } },
 };
 
 function useResponsive() {
   const [r, setR] = useState(RESPONSIVE.desktop);
   useEffect(() => {
-    const mq   = window.matchMedia("(pointer: coarse)");
+    const mq = window.matchMedia("(max-width: 768px), (pointer: coarse)");
     const read = () => setR(mq.matches ? RESPONSIVE.small : RESPONSIVE.desktop);
     read();
     mq.addEventListener("change", read);
@@ -209,13 +208,13 @@ const SplashCard = memo(function SplashCard({
   const scale  = useTransform(progress, [0, 1], [stackScale, restScale]);
 
   const w = fixedCard ? fixedCard.w : card.target.w;
-  const h = fixedCard ? fixedCard.h : card.target.h;
 
   return (
     <motion.div
       style={{
         position: "absolute", left: "50%", top: "50%",
-        width: `${w}vw`, height: `${h}vh`,
+        width: `${w}vw`,
+        aspectRatio: "1 / 1.15",
         zIndex: card.z ?? 1,
         translate, rotate, scale,
         willChange: "transform",
@@ -223,7 +222,7 @@ const SplashCard = memo(function SplashCard({
       }}
     >
       <div style={{
-        position: "relative", width: "100%", height: "100%", overflow: "hidden", borderRadius: 10,
+        position: "relative", width: "100%", height: "100%", overflow: "hidden", borderRadius: 4,
         boxShadow: "0 12px 36px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.3)",
         backfaceVisibility: "hidden",
         WebkitBackfaceVisibility: "hidden",
@@ -276,8 +275,16 @@ export default function IntroSplash({ onDone }: Props) {
   const dismiss = useCallback(() => {
     if (dismissed.current) return;
     dismissed.current = true;
+    window.scrollTo(0, 0);
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
     setVisible(false);         // triggers fade-out on the outer motion.div
-    dismissTimer.current = setTimeout(onDone, 650);   // unmount after fade completes
+    dismissTimer.current = setTimeout(() => {
+      window.scrollTo(0, 0);
+      if (document.documentElement) document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+      onDone();
+    }, 650);   // unmount after fade completes
   }, [onDone]);
 
   // Skip animation for users who prefer reduced motion
@@ -293,13 +300,6 @@ export default function IntroSplash({ onDone }: Props) {
     [0, SCATTER_START, SCATTER_END, 1],
     [0, 0, 1, 1],
   );
-
-  // Auto-dismiss 400 ms after scatter completes (guarded against duplicate timers)
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    if (v >= 0.99 && !dismissed.current && !autoDismissTimer.current) {
-      autoDismissTimer.current = setTimeout(dismiss, 400);
-    }
-  });
 
   // Enable pointer parallax only after spread is complete
   const [spread, setSpread] = useState(false);
@@ -349,8 +349,8 @@ export default function IntroSplash({ onDone }: Props) {
             WebkitOverflowScrolling: "touch",
           } as React.CSSProperties}
         >
-          {/* Tall content = how far the user must scroll to complete the spread */}
-          <div style={{ height: `${SCROLL_LENGTH}vh`, position: "relative" }}>
+          {/* Tall content = two scrolls to complete the spread without auto-navigation */}
+          <div style={{ height: "calc(100vh + 260px)", position: "relative" }}>
 
             {/* ── Sticky viewport — stays on screen throughout the scroll ── */}
             <div style={{

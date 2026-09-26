@@ -13,6 +13,7 @@ export const PAGE_TITLES: Record<Page, string> = {
   contact: 'Contact | A-Picks Solutions',
   leads: 'Lead marketplace | A-Picks Solutions',
   account: 'Account access | A-Picks Solutions',
+  login: 'Login | A-Picks Solutions',
 }
 
 export interface NavigationState {

@@ -1,3 +1,7 @@
 export * from './PageHero'
 export * from './BigCTA'
 export * from './Marquee'
+export * from './WhatsAppFloat'
+export * from './ContactSection'
+export * from './ContactForm'
+export * from './ContactInfo'

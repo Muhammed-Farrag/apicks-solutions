@@ -1,4 +1,4 @@
-export type Page = 'home' | 'about' | 'services' | 'pricing' | 'faq' | 'contact' | 'leads' | 'account'
+export type Page = 'home' | 'about' | 'services' | 'pricing' | 'faq' | 'contact' | 'leads' | 'account' | 'login'
 
 export const PAGE_NAMES: readonly Page[] = [
   'home',
@@ -9,4 +9,5 @@ export const PAGE_NAMES: readonly Page[] = [
   'contact',
   'leads',
   'account',
+  'login',
 ] as const

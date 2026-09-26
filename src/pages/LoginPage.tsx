@@ -1,28 +1,29 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { ArrowUpRight } from 'lucide-react'
-import { isSignupConfigured, registerAccountEmail } from '../services'
 import { useGoogleAuth } from '../hooks'
 import { PageLink } from '../components/navigation'
 
-const PIPELINE_PREVIEW_STAGES = [
-  { step: '01', label: 'DISCOVER', progress: '72%' },
-  { step: '02', label: 'REVIEW', progress: '55%' },
-  { step: '03', label: 'MOVE', progress: '86%' },
+const LOGIN_FEATURES = [
+  { step: '01', label: 'CAMPAIGN METRICS', progress: '100%' },
+  { step: '02', label: 'LEAD ACTIVITY', progress: '85%' },
+  { step: '03', label: 'APPOINTMENTS', progress: '92%' },
 ] as const
 
 /**
- * Account Access / Deal Room Onboarding Page Component.
+ * Dedicated Member Login Page Component.
  *
  * Implements:
  * - Google Identity Services (GIS) Web Authentication with official credential handler.
- * - Frontend authentication state (unauthenticated, loading, authenticated, error).
- * - Prepared for future backend verification (`POST /auth/google`).
- * - Email signup onboarding integration.
+ * - Application-styled rectangular Google sign-in button.
+ * - Email & Password authentication form inputs.
+ * - Seamless navigation link to registration ("JOIN A-PICKS").
+ * - Responsive two-column layout inheriting the established A-Picks visual system.
  */
-export function AccountPage() {
+export function LoginPage() {
   const [email, setEmail] = useState('')
-  const [signupStatus, setSignupStatus] = useState('')
+  const [password, setPassword] = useState('')
+  const [loginStatus, setLoginStatus] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [localGoogleError, setLocalGoogleError] = useState('')
 
@@ -36,22 +37,14 @@ export function AccountPage() {
     signOut,
   } = useGoogleAuth()
 
-  async function handleEmailSignup(event: FormEvent<HTMLFormElement>) {
+  function handleEmailLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!isSignupConfigured()) {
-      setSignupStatus('Email registration is not open yet. Send the team a message for account access.')
-      return
-    }
     setIsSubmitting(true)
-    try {
-      await registerAccountEmail(email)
-      setSignupStatus('Check your inbox for the next step.')
-      setEmail('')
-    } catch {
-      setSignupStatus('Registration could not be completed. Please try again later.')
-    } finally {
+    // Frontend-only application state: portal authentication service connecting
+    setTimeout(() => {
+      setLoginStatus('Authentication service is currently being connected for live campaigns. Contact the team for direct portal access.')
       setIsSubmitting(false)
-    }
+    }, 600)
   }
 
   const displayedError = authError || localGoogleError
@@ -59,24 +52,29 @@ export function AccountPage() {
   return (
     <section className="k-account-section k-section">
         <div className="k-container k-account-layout">
+          {/* LEFT DISPLAY CARD */}
           <div className="k-account-display" data-reveal>
-            <span>YOUR PIPELINE / ACCESS PREVIEW</span>
-            <h2>SEE THE SIGNAL.<br /><em>STAY AHEAD.</em></h2>
+            <span>CLIENT PORTAL / SECURE ACCESS</span>
+            <h2>WELCOME<br /><em>BACK.</em></h2>
             <div className="k-account-visual">
-              {PIPELINE_PREVIEW_STAGES.map((stage) => (
-                <div key={stage.step}>
-                  <span>{stage.step}</span>
-                  <strong>{stage.label}</strong>
-                  <i style={{ width: stage.progress }} />
+              {LOGIN_FEATURES.map((item) => (
+                <div key={item.step}>
+                  <span>{item.step}</span>
+                  <strong>{item.label}</strong>
+                  <i style={{ width: item.progress }} />
                 </div>
               ))}
             </div>
-            <p>The account view is a preview; live leads and personal activity will appear after the authentication and bidding services are connected.</p>
+            <p>
+              The client portal gives real estate investors and wholesalers visibility into daily dial metrics, booked appointments, and lead delivery in real time.
+            </p>
           </div>
+
+          {/* RIGHT LOGIN FORM */}
           <div className="k-account-form">
-            <span>JOIN THE DEAL ROOM</span>
-            <h2>START HERE<span>.</span></h2>
-            <p>Choose a sign-up method. Provider buttons become live when A-Picks connects its authentication service.</p>
+            <span>MEMBER LOGIN</span>
+            <h2>SIGN IN<span>.</span></h2>
+            <p>Access your A-Picks account using Google or your work credentials.</p>
 
             {isAuthenticated && user ? (
               <div
@@ -195,7 +193,7 @@ export function AccountPage() {
                     onClick={() => {
                       if (!isConfigured) {
                         setLocalGoogleError(
-                          'Google sign-up is not configured. Please set VITE_GOOGLE_CLIENT_ID in your environment.'
+                          'Google sign-in is not configured. Please set VITE_GOOGLE_CLIENT_ID in your environment.'
                         )
                       }
                     }}
@@ -229,11 +227,13 @@ export function AccountPage() {
                 {displayedError}
               </p>
             )}
+
             <div className="k-account-divider">OR USE YOUR EMAIL</div>
-            <form onSubmit={handleEmailSignup}>
-              <label htmlFor="account-email">WORK EMAIL</label>
+
+            <form onSubmit={handleEmailLogin}>
+              <label htmlFor="login-email">WORK EMAIL</label>
               <input
-                id="account-email"
+                id="login-email"
                 type="email"
                 autoComplete="email"
                 required
@@ -241,18 +241,35 @@ export function AccountPage() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
+
+              <label htmlFor="login-password">PASSWORD</label>
+              <input
+                id="login-password"
+                type="password"
+                autoComplete="current-password"
+                required
+                placeholder="••••••••"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+
               <button className="k-action k-action-mint" type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'SENDING…' : 'SIGN UP WITH EMAIL'} <ArrowUpRight size={18} />
+                {isSubmitting ? 'SIGNING IN…' : 'LOGIN'} <ArrowUpRight size={18} />
               </button>
             </form>
-            {signupStatus && <p className="k-form-status" role="status">{signupStatus}</p>}
+
+            {loginStatus && <p className="k-form-status" role="status">{loginStatus}</p>}
+
             <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <span style={{ fontSize: '13px', color: '#5d7864' }}>Already have an account?</span>
-              <PageLink page="login" className="k-underlink">
-                SIGN IN HERE <ArrowUpRight size={17} />
+              <span style={{ fontSize: '13px', color: '#5d7864' }}>Don't have an account?</span>
+              <PageLink page="account" className="k-underlink">
+                JOIN A-PICKS <ArrowUpRight size={17} />
               </PageLink>
             </div>
-            <PageLink page="contact" className="k-underlink" style={{ marginTop: '16px' }}>NEED HELP? TALK TO A-PICKS <ArrowUpRight size={17} /></PageLink>
+
+            <PageLink page="contact" className="k-underlink" style={{ marginTop: '16px' }}>
+              NEED HELP? TALK TO A-PICKS <ArrowUpRight size={17} />
+            </PageLink>
           </div>
         </div>
       </section>

@@ -12,6 +12,15 @@ export function Footer() {
         <div>
           <Brand />
           <p>Real estate sales support for the conversations that move deals.</p>
+          <a
+            href="https://wa.me/14014225616"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="k-underlink"
+            style={{ color: 'var(--mint)', marginTop: '16px' }}
+          >
+            WhatsApp Us <ArrowUpRight size={16} />
+          </a>
         </div>
         <div>
           <span>EXPLORE</span>
@@ -27,7 +36,7 @@ export function Footer() {
           <PageLink page="account">Account access</PageLink>
         </div>
         <div>
-          <span>CONTACT</span>
+          <span>CONTACT US</span>
           <div className="k-footer-contact-item">
             <span>Tel: </span>
             <a href="tel:+14014225616">(401) 422-5616</a>

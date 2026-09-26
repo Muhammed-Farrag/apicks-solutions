@@ -4,18 +4,36 @@ import Site from './Site'
 import IntroSplash from './IntroSplash'
 import './kinetic.css'
 
+// Reset URL query parameters and scroll position on reload so refresh ALWAYS starts at Splash and routes to Home
+if (typeof window !== 'undefined') {
+  if ('scrollRestoration' in window.history) {
+    window.history.scrollRestoration = 'manual'
+  }
+  if (window.location.search || window.location.hash) {
+    window.history.replaceState({}, '', window.location.pathname)
+  }
+  window.scrollTo(0, 0)
+}
+
 function App() {
   // No storage — useState(true) means splash shows on EVERY page load/refresh
   const [showSplash, setShowSplash] = useState(true)
+
+  const handleSplashDone = () => {
+    window.scrollTo(0, 0)
+    if (document.documentElement) document.documentElement.scrollTop = 0
+    if (document.body) document.body.scrollTop = 0
+    setShowSplash(false)
+  }
 
   return (
     <>
       {/* Landing page always mounted behind the splash */}
       <Site />
 
-      {/* Fixed overlay — disappears after animation or on CTA click */}
+      {/* Fixed overlay — disappears after user presses Explore Leads */}
       {showSplash && (
-        <IntroSplash onDone={() => setShowSplash(false)} />
+        <IntroSplash onDone={handleSplashDone} />
       )}
     </>
   )

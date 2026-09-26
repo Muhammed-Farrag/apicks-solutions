@@ -11,40 +11,39 @@ export interface HeaderProps {
 interface NavItem {
   page: Page
   name: string
+  hidden?: boolean
 }
 
 const NAV_ITEMS: readonly NavItem[] = [
-  { page: 'about', name: 'About' },
+  { page: 'home', name: 'Home' },
+  { page: 'about', name: 'About Us' },
   { page: 'services', name: 'Services' },
   { page: 'pricing', name: 'Pricing' },
-  { page: 'leads', name: 'Leads' },
+  // Future Marketplace: reuses existing leads navigation slot, hidden until marketplace launch
+  { page: 'leads', name: 'Marketplace', hidden: true },
   { page: 'faq', name: 'FAQ' },
   { page: 'contact', name: 'Contact' },
-  { page: 'account', name: 'Account access' },
 ] as const
 
 /**
  * Top Header Component for A-Picks Solutions.
  *
  * BEHAVIOR & ARCHITECTURE:
- * 1. Announcement Bar: Displays the top off-market badge with direct CTA link to Lead Room.
+ * 1. Balanced 3-Column Composition:
+ *    - Left: Brand Logo.
+ *    - Center-Right: Primary navigation (Home | About Us | Services | Pricing | FAQ | Contact).
+ *    - Right: Squared action buttons (JOIN A-PICKS + LOGIN).
  * 2. Sticky Scroll-Shrink Effect:
  *    - Listens to window scroll events with passive listeners.
  *    - Toggles `.is-scrolled` CSS class when scrollY exceeds 30px, activating a compact backdrop blur.
- * 3. Desktop Navigation:
- *    - Maps all 7 primary subpages.
- *    - Highlights active route with `.is-current` class based on current Page prop.
- * 4. Mobile Responsive Drawer:
+ * 3. Mobile Responsive Drawer:
  *    - Accessible hamburger button with dynamic `aria-expanded` and `aria-label`.
- *    - Slid-out drawer toggling `.is-open` class on navigation container.
+ *    - Slide-out drawer toggling `.is-open` class on navigation container.
+ *    - Displays consistent navigation list with both JOIN A-PICKS and LOGIN action buttons.
  *    - Automatically closes mobile drawer on navigation click.
- * 5. Routing Integration:
+ * 4. Routing Integration:
  *    - Uses PageLink component which integrates with RouteContext, browser history,
  *      and Native View Transitions API.
- *
- * TODO (Future Roadmap / Phase 7+):
- * - Add user authentication avatar & notification badge when logged into deal room.
- * - Add key listener for Escape to close mobile menu when open.
  */
 export function Header({ page }: HeaderProps) {
   // Mobile drawer open/closed state
@@ -61,33 +60,45 @@ export function Header({ page }: HeaderProps) {
 
   return (
     <>
-      <div className="k-announcement">
-        <span>THE OFF-MARKET ADVANTAGE</span>
-        <span>CALLS → CONVERSATIONS → OPPORTUNITIES</span>
-        <PageLink page="leads">
-          ENTER THE LEAD ROOM <ArrowUpRight size={14} />
-        </PageLink>
-      </div>
       <header className={`k-header${scrolled ? ' is-scrolled' : ''}`}>
         <div className="k-header-inner">
           <Brand />
           <nav className={open ? 'k-nav is-open' : 'k-nav'} aria-label="Primary navigation">
-            {NAV_ITEMS.map((item) => (
+            {NAV_ITEMS.filter((item) => !item.hidden).map((item) => (
               <PageLink
-                key={item.page}
+                key={item.page + item.name}
                 page={item.page}
                 onClick={() => setOpen(false)}
-                className={`${page === item.page ? 'is-current ' : ''}${
-                  item.page === 'account' ? 'k-nav-account' : ''
-                }`}
+                className={page === item.page ? 'is-current' : undefined}
               >
                 {item.name}
               </PageLink>
             ))}
+            <div className="k-nav-mobile-actions">
+              <PageLink
+                page="account"
+                onClick={() => setOpen(false)}
+                className="k-header-btn k-header-btn-primary"
+              >
+                JOIN A-PICKS <ArrowUpRight size={16} />
+              </PageLink>
+              <PageLink
+                page="login"
+                onClick={() => setOpen(false)}
+                className="k-header-btn k-header-btn-secondary"
+              >
+                LOGIN
+              </PageLink>
+            </div>
           </nav>
-          <PageLink page="account" className="k-header-join">
-            JOIN A-PICKS <ArrowUpRight size={17} />
-          </PageLink>
+          <div className="k-header-actions">
+            <PageLink page="account" className="k-header-btn k-header-btn-primary">
+              JOIN A-PICKS <ArrowUpRight size={16} />
+            </PageLink>
+            <PageLink page="login" className="k-header-btn k-header-btn-secondary">
+              LOGIN
+            </PageLink>
+          </div>
           <button
             className="k-menu"
             onClick={() => setOpen(!open)}

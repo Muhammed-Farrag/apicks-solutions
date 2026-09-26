@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { ArrowUpRight, Check } from 'lucide-react'
 import { services } from '../data'
 import { PageLink } from '../components/navigation'
-import { PageHero, BigCTA } from '../components/common'
+import { BigCTA } from '../components/common'
+import { ServicesHero } from '../components/services'
 
 const SUPPORT_PROOF_POINTS = [
   'Outreach built around your market',
@@ -14,10 +15,8 @@ const SUPPORT_PROOF_POINTS = [
 /**
  * Services Page Component.
  *
- * Cleaned in Phase 7 (DRY & Readability):
- * - Clear descriptive naming (`activeServiceIndex`, `selectedService`).
- * - Safe fallback indexing for service item lookup.
- * - Extracted support proof points constant.
+ * Uses a dedicated ServicesHero with green dot-pattern background,
+ * followed by service selector panel and support proof section.
  */
 export function ServicesPage() {
   const [activeServiceIndex, setActiveServiceIndex] = useState(0)
@@ -25,14 +24,7 @@ export function ServicesPage() {
 
   return (
     <>
-      <PageHero
-        index="03"
-        label="WHAT WE DO"
-        title={<>A PIPELINE<br />BUILT TO<br /><em>MOVE.</em></>}
-        description="Four connected services, from first seller contact to investor-ready handoff."
-      >
-        <PageLink page="pricing" className="k-action k-action-mint">SEE THE NUMBERS <ArrowUpRight size={18} /></PageLink>
-      </PageHero>
+      <ServicesHero />
       <section className="k-services-work k-section">
         <div className="k-container">
           <div className="k-section-marker">01 <span>SELECT A SERVICE</span></div>

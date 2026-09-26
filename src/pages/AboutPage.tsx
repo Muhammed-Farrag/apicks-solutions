@@ -1,6 +1,6 @@
-import { ArrowUpRight } from 'lucide-react'
-import { PageLink } from '../components/navigation'
-import { PageHero, BigCTA } from '../components/common'
+import { BigCTA } from '../components/common'
+import { AboutHero } from '../components/about'
+
 const CORE_VALUES = [
   { n: '01', title: 'Experienced callers', text: 'Professional conversations that build trust and surface useful information.' },
   { n: '02', title: 'Clear economics', text: 'Straightforward pricing and reporting so outreach can grow with your business.' },
@@ -11,21 +11,13 @@ const CORE_VALUES = [
 /**
  * About Page Component.
  *
- * Cleaned in Phase 7 (DRY & Readability):
- * - Extracted core brand values into declarative `CORE_VALUES` constant.
- * - Simplified JSX rendering for values grid.
+ * Dedicated AboutHero section with floating house illustration and green vertical gradient,
+ * accompanied by brand story, values grid, and call to action.
  */
 export function AboutPage() {
   return (
     <>
-      <PageHero
-        index="02"
-        label="WHO WE ARE"
-        title={<>THE WORK<br />BEHIND THE<br /><em>WIN.</em></>}
-        description="A-Picks Solutions helps wholesalers, investors, and real estate teams turn purposeful outreach into deal momentum."
-      >
-        <PageLink page="contact" className="k-action k-action-mint">MEET OUR TEAM <ArrowUpRight size={18} /></PageLink>
-      </PageHero>
+      <AboutHero />
       <section className="k-about-story k-section">
         <div className="k-container k-story-grid">
           <div data-reveal>
@@ -35,7 +27,7 @@ export function AboutPage() {
             <p>That means trained callers, cost-conscious support, and a campaign shaped around your market and buying criteria.</p>
           </div>
           <div className="k-story-image" data-reveal>
-            <img src="./images/townhouse.webp" alt="Illustrative residential property" loading="lazy" />
+            <img src="./images/land5.jpg" alt="Illustrative residential property" loading="lazy" />
             <span>THE CONVERSATION CHANGES EVERYTHING / AP 02</span>
           </div>
         </div>

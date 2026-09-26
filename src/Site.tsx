@@ -4,6 +4,7 @@ import { useNavigation, useScrollProgress, useScrollReveal } from './hooks'
 import { Header, Footer } from './components/layout'
 import { RouteContext } from './components/navigation'
 import { BidDialog } from './components/leads'
+import { WhatsAppFloat } from './components/common'
 import {
   HomePage,
   AboutPage,
@@ -13,6 +14,7 @@ import {
   ContactPage,
   LeadsPage,
   AccountPage,
+  LoginPage,
 } from './pages'
 
 /**
@@ -55,6 +57,7 @@ export default function Site() {
     contact: <ContactPage />,
     leads: <LeadsPage />,
     account: <AccountPage />,
+    login: <LoginPage />,
   }
 
   return (
@@ -66,6 +69,7 @@ export default function Site() {
           {routes[page]}
         </main>
         <Footer />
+        <WhatsAppFloat />
         {lead && <BidDialog key={lead.id} lead={lead} close={closeLead} />}
       </div>
     </RouteContext.Provider>
